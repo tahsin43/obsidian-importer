@@ -250,7 +250,11 @@ export class AppleNotesImporter extends FormatImporter {
 		}
 
 		const folder = this.resolvedFolders[row.ZFOLDER] || this.rootFolder;
-
+		const existingFile = this.vault.getAbstractFileByPath(path.join(folder.path, `${row.ZTITLE1}.md`));
+		if (existingFile) {
+			this.ctx.reportSkipped(row.ZTITLE1, 'file already exists');
+			return existingFile as TFile;
+		}
 		const title = `${row.ZTITLE1}.md`;
 		const file = await this.saveAsMarkdownFile(folder, title, '');
 
